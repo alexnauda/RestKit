@@ -761,12 +761,12 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
 
 #pragma mark - Request and Response Descriptors by Convention
 
-- (void)autoResponseDescriptor:(RKObjectMapping *)objectMapping forKeyPath:(NSString *)keyPath:(RKObjectMapping*)objectMapping forKeyPath:(NSString*)keyPath
+- (void)autoResponseDescriptor:(RKObjectMapping*)objectMapping forKeyPath:(NSString*)keyPath
 {
     [self addResponseDescriptor:[RKResponseDescriptor responseDescriptorWithMapping:objectMapping pathPattern:nil keyPath:keyPath statusCodes:[NSIndexSet indexSetWithIndex:200]]];
 }
 
-- (void)autoRequestDescriptor:(RKObjectMapping *)requestMapping forClass:(Class)clazz:(RKObjectMapping*)requestMapping forClass:(Class)clazz
+- (void)autoRequestDescriptor:(RKObjectMapping*)requestMapping forClass:(Class)clazz
 {
     [self addRequestDescriptor:[RKRequestDescriptor requestDescriptorWithMapping:requestMapping objectClass:clazz rootKeyPath:nil]];
 }
