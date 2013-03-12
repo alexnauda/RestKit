@@ -799,6 +799,32 @@ RKMappingResult, RKRequestDescriptor, RKResponseDescriptor;
  */
 - (void)removeResponseDescriptor:(RKResponseDescriptor *)responseDescriptor;
 
+///-----------------------------------------------------
+/// @name Request and Response Descriptors by Convention
+///-----------------------------------------------------
+
+/**
+ Create and add a response descriptor for a conventional case:
+ - Recognize objects by the given keyPath
+ - Process them using the specified mapping
+ - For HTTP status code 200 OK
+ - With no path pattern restrictions
+ @param keyPath The key path used to recognize the object
+ @param objectMapping The mapping used to process the object
+ */
+- (void)autoResponseDescriptor:(RKObjectMapping*)objectMapping forKeyPath:(NSString*)keyPath;
+
+/**
+ Create and add a request descriptor for a conventional case:
+ - Accept the specified class
+ - Serialize it using the specified request mapping
+ - Do not nest the object under a rootKeyPath, but treat it as a flat dictionary
+ @param requestMapping The mapping to be used when parameterizing an object using the request descriptor. Cannot be nil and must have an objectClass equal to `[NSMutableDictionary class]`.
+ @param objectClass The class of objects for which the request descriptor should be used. Cannot be nil.
+ */
+- (void)autoRequestDescriptor:(RKObjectMapping*)requestMapping forClass:(Class)clazz;
+
+
 ///----------------------------------------
 /// @name Configuring Core Data Integration
 ///----------------------------------------

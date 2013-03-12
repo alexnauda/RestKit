@@ -26,6 +26,8 @@
 #import "RKISO8601DateFormatter.h"
 #import "RKAttributeMapping.h"
 #import "RKRelationshipMapping.h"
+#import <objc/runtime.h>
+
 
 typedef NSString * (^RKSourceToDesinationKeyTransformationBlock)(RKObjectMapping *, NSString *sourceKey);
 
@@ -141,6 +143,63 @@ static RKSourceToDesinationKeyTransformationBlock defaultSourceToDestinationKeyT
     }
 
     return self;
+}
+
+#pragma mark -  Creating Mappings by Convention
+
++ (id)autoResponseMapping:(Class)clazz
+{
+    RKLogTrace(@"Adding auto response mapping for class %@", clazz);
+    RKObjectMapping* mapping = [RKObjectMapping mappingForClass:clazz];
+    [mapping autoAddAttributes:clazz];
+    return mapping;
+}
+
+
++ (id)autoRequestMapping:(Class)clazz
+{
+    RKLogTrace(@"Adding auto request mapping for class %@", clazz);
+    RKObjectMapping* mapping = [RKObjectMapping requestMapping];
+    [mapping autoAddAttributes:clazz];
+    return mapping;
+}
+
+
+- (void)autoAddAttributes:(Class)clazz
+{
+    // dynamically introspect the class and add attribute mappings identical to its properties
+    NSMutableArray *propertyArray;
+    propertyArray = [self copyPropertiesFromClass:clazz];
+    // add the properties to the mapping
+    [self addAttributeMappingsFromArray:propertyArray];
+}
+
+
+- (void)autoRelationship:(RKObjectMapping*)mapping forKeyPath:(NSString*)keyPath
+{
+    [self removePropertyMapping:[[self propertyMappingsBySourceKeyPath] valueForKey:keyPath]];
+    [self addRelationshipMappingWithSourceKeyPath:keyPath mapping:mapping];
+}
+
+- (NSMutableArray *)copyPropertiesFromClass:(Class)clazz {
+    // build an array of all this class's properties
+    u_int count;
+    objc_property_t* properties = class_copyPropertyList(clazz, &count);
+    NSMutableArray* propertyArray = [NSMutableArray arrayWithCapacity:count];
+    for (int i = 0; i < count ; i++)
+    {
+        const char* propertyName = property_getName(properties[i]);
+        [propertyArray addObject:[NSString  stringWithCString:propertyName encoding:NSUTF8StringEncoding]];
+    }
+    free(properties);
+    
+    // add properties from the super as well
+    Class superclazz = class_getSuperclass(clazz);
+    if (superclazz != [NSObject class]) {
+        [propertyArray addObjectsFromArray:[self copyPropertiesFromClass:[clazz superclass]]];
+    }
+    
+    return propertyArray;
 }
 
 - (void)copyPropertiesFromMapping:(RKObjectMapping *)mapping

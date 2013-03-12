@@ -96,6 +96,41 @@
  */
 + (RKObjectMapping *)requestMapping;
 
+///--------------------------------------
+/// @name Creating Mappings by Convention
+///--------------------------------------
+
+/**
+ Returns an object mapping for the specified class, pre-configured by introspecting the class's properties and assuming identically-named property mappings. This is ideal for cases where you can manage the message structure and/or the target classes to use identical names (convention over configuration).
+ 
+ @param clazz The class that the mapping targets.
+ @return A new response mapping object pre-configured by introspection of properties
+ */
++ (id)autoResponseMapping:(Class)clazz;
+
+/**
+ Returns a request mapping for the specified class, pre-configured by introspecting the class's properties and assuming identically-named property mappings. This is ideal for cases where you can manage the message structure and/or the target classes to use identical names (convention over configuration).
+ 
+ @param clazz The class that the mapping targets.
+ @return A new request mapping object pre-configured by introspection of properties
+ */
++ (id)autoRequestMapping:(Class)clazz;
+
+/**
+ Populates attribute mappings by introspecting the properties of a class. This is ideal for cases where you can manage the message structure and/or the target classes to use identical names (convention over configuration).
+ @param clazz The class to introspect
+ */
+- (void)autoAddAttributes:(Class)clazz;
+
+/**
+ Adds a relationship mapping for a nested object. If a property mapping exists for the given key path, it will be removed and replaced with the specified mapping. This is ideal for cases where you can manage the message structure and/or the target classes to use identical names (convention over configuration).
+ 
+ @param keyPath The source key path at which to read the nested representation of the related objects.
+ @param mapping The object mapping with which to process the related object representation.
+ */
+- (void)autoRelationship:(RKObjectMapping*)mapping forKeyPath:(NSString*)keyPath;
+
+
 ///----------------------------------
 /// @name Accessing Property Mappings
 ///----------------------------------

@@ -759,6 +759,18 @@ static NSString *RKMIMETypeFromAFHTTPClientParameterEncoding(AFHTTPClientParamet
     [self.mutableResponseDescriptors removeObject:responseDescriptor];
 }
 
+#pragma mark - Request and Response Descriptors by Convention
+
+- (void)autoResponseMapping:(RKObjectMapping*)objectMapping forKeyPath:(NSString*)keyPath
+{
+    [self addResponseDescriptor:[RKResponseDescriptor responseDescriptorWithMapping:objectMapping pathPattern:nil keyPath:keyPath statusCodes:[NSIndexSet indexSetWithIndex:200]]];
+}
+
+- (void)autoRequestMapping:(RKObjectMapping*)requestMapping forClass:(Class)clazz
+{
+    [self addRequestDescriptor:[RKRequestDescriptor requestDescriptorWithMapping:requestMapping objectClass:clazz rootKeyPath:nil]];
+}
+
 #pragma mark - Fetch Request Blocks
 
 - (NSArray *)fetchRequestBlocks
